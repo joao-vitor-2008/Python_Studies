@@ -1,5 +1,19 @@
+# Lista com os k primeiros elementos de uma lista xs
+# def take(k,xs): ?
+# Lista com os elementos de xs seguintes aos k primeiros
+# def drop(k,xs): ?
+# Primeiro elemento de uma lista xs
+# def head(xs): ?
+# Sublista similar a xs mas sem o primeiro elemento
+# def tail(xs): ?
+# Ultimo elemento de uma lista xs
+# def last(xs): ?
+# Sublista similar a xs mas sem o ultimo elemento
+# def init(xs): ?
+
+
 def take(k, xs):
-    return xs[:-k]
+    return xs[: -(len(xs) - k)]
 
 
 def drop(k, xs):
@@ -29,11 +43,11 @@ def init(xs):
 
 
 def aprov(nfs):
-    [aluno for aluno in nfs if (aluno[1] >= 5) and (aluno[2] >= 75)]
+    return [aluno for aluno in nfs if (aluno[1] >= 5) and (aluno[2] >= 75)]
 
 
 # Dado uma lista de triplas contendo o número de matrícula,
-# a nota final (0-10) e a frequência (0-100) de alunos de certa
+# a nota ffnal (0-10) e a frequência (0-100) de alunos de certa
 # disciplina, defina a função rfinal(nfs) cuja avaliação associe
 # uma tupla formada por 4 inteiros onde: o primeiro representa
 # a quantidade de alunos aprovados, o segundo a quantidade de alunos
@@ -71,3 +85,5 @@ def rfinal(nfs):
             reprovadosNota += 1
         elif reprovadoFalta(aluno):
             reprovadosFalta += 1
+
+    return (aprovados, reprovadosNota, reprovadosFalta, reprovadosNotaFalta)
