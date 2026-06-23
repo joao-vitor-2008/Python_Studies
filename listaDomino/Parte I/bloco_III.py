@@ -1,120 +1,169 @@
-# P17: Escreva a função mesap que as
-# socie uma quadrupla de listas a True
-# sss a quadrupla for
-# uma descrição válida de "mesa".
+from functools import reduce
 
 
-def pertIntervaloFechado(x, a, b):
+def pert(x, a, b):
     return a <= x <= b
 
 
-def mesap(mesa):
-    if len(mesa) != 4:
-        return False
-    for pedra in mesa:
-        if not (pedra != []):
-            if len(pedra) > 2:
-                return False
-            if len(pedra) == 2:
-                (p1, p2) = pedra
-                if p1 != p2:
-                    return False
-            if not (pertIntervaloFechado(pedra[0], 0, 6)):
-                return False
+def e_carroca(p):
+    return p[0] == p[1]
 
+
+def sum(a, b):
+    return a + b
+
+
+def valor_pt(pt):
+    if pt == []:
+        return 0
+    if len(pt) == 1:
+        return pt[0]
+    if len(pt) == 2:
+        return sum(pt[0], pt[1])
+
+
+def onde_pode_jogar(p, mesa):
+    return [mesa.index(pt) for pt in mesa if p[0] in pt or p[1] in pt]
+
+
+def head(xs):
+    return xs[0]
+
+
+def sub_p_in_mesa(p, mesa):
+    mesa_l = list(mesa)
+
+    jogadas = onde_pode_jogar(p, mesa)
+    primeira_jogada = head(jogadas)
+
+    index_p = p.index(head(mesa[primeira_jogada]))
+
+    if index_p == 1:
+        mesa_l[primeira_jogada] = [p[0]]
     else:
-        return True
-# P18: Escreva a função carroca_m_p que associe
-# uma mesa a True sss pelo menos uma das pontas
-# for carroça.
+        mesa_l[primeira_jogada] = [p[1]]
+    return tuple(mesa_l)
 
 
+def subt_p_i(p, mesa):
+    return [
+        (pontos_marcados(joga_pedra(p, mesa, i)), i) for i in onde_pode_jogar(p, mesa)
+    ]
+
+
+def subt_p_from_mao_in_mesa(p, mesa, mao):
+    return [
+        (pontos_marcados(joga_pedra(p, mesa, i)), i, mao.index(p))
+        for i in onde_pode_jogar(p, mesa)
+    ]
+
+
+def subt_p_from_i_in_mesa(tp, mao, mesa):
+    (index_mesa, index_mao) = tp
+    mesa_l = list(mesa)
+
+    p = mao[index_mao]
+
+    jogadas = onde_pode_jogar(p, mesa)
+    primeira_jogada = head(jogadas)
+
+    index_p = p.index(head(mesa[primeira_jogada]))
+
+    if index_p == 1:
+        mesa_l[index_mesa] = [p[0]]
+    else:
+        mesa_l[index_mesa] = [p[1]]
+
+    return tuple(mesa_l)
+
+
+# ==========================================================================================
+
+
+# P17
+def mesap(mesa):
+    return (
+        len(
+            [
+                pt
+                for pt in mesa
+                if (len(pt) == 0)
+                or (len(pt) == 1 and pert(pt[0], 0, 6))
+                or (len(pt) == 2 and e_carroca(pt) and pert(pt[0], 0, 6))
+            ]
+        )
+        == 4
+        and len(mesa) == 4
+    )
+
+
+# P18
 def carroca_m_p(mesa):
-    for pedra in mesa:
-        if len(pedra) == 2:
-            if pedra[0] == pedra[1]:
-                return True
-    return False
-# P19: Escreva a função pontos_marcados que associe uma
-# mesa ao o número de pontos a serem marcados se
-# a soma das pontas for múltiplo de cinco e zero em caso
-# contrário.
+    return [pt for pt in mesa if len(pt) == 2 and e_carroca(pt)] != []
 
 
-from P17 import mesap
-
-
+# P19
 def pontos_marcados(mesa):
-    if mesap(mesa):
-        somaDasPontas = 0
-        for pedra in mesa:
-            if len(pedra) == 2:
-                somaDasPontas += pedra[0] + pedra[1]
-            else:
-                somaDasPontas += pedra[0]
-        if (somaDasPontas == 0) or (somaDasPontas % 5 != 0):
-            return 0
+    pontos_mesa = reduce(sum, [valor_pt(pt) for pt in mesa])
+    if pontos_mesa is None:
+        return 0
+    if pontos_mesa % 5 == 0:
+        return pontos_mesa
+    else:
+        return 0
+
+
+# P20
+def pode_jogar_p(p, mesa):
+    return [pt for pt in mesa if p[0] in pt or p[1] in pt] != []
+
+
+# P21
+def marca_ponto_p(p, mesa):
+    pontos = subt_p_i(p, mesa)
+    return [head(pt) for pt in pontos if head(pt) != 0] != []
+
+
+# P22
+def maior_ponto(p, mesa):
+    return max(subt_p_i(p, mesa))[1]
+
+
+# P23
+def joga_pedra(p, mesa, i):
+    mesa_l = list(mesa)
+    pt_atual = mesa[i]
+
+    if len(pt_atual) == 0:
+        if p[0] == p[1]:
+            mesa_l[i] = [p[0], p[1]]
         else:
-            return somaDasPontas
-# P20: Escreva a função pode_jogar_p que associe
-# uma "pedra" e uma "mesa" a True sss a pedra
-# possui uma ponta que combina com pelo menos
-# uma das pontas da mesa.
+            mesa_l[i] = [p[0]]
+    else:
+        val_mesa = pt_atual[0]
+        if p[0] == val_mesa:
+            novo_lado = p[1]
+        else:
+            novo_lado = p[0]
 
-from P17 import mesap
-
-
-def onde_pode_jogar_p(pedra, mesa):
-    if len(pedra) == 1:
-        index_combinacoes = [
-            mesa.index(comb)
-            for comb in mesa
-            if (comb != 0) and ((comb[0] == pedra[0]) or (comb[1] == pedra[0]))
-        ]
-        return index_combinacoes
-    elif len(pedra) == 2:
-        (p1, p2) = pedra
-        index_combinacoes = [
-            mesa.index(comb)
-            for comb in mesa
-            if (comb != [])
-            and (
-                ((comb[0] == p1) or (comb[0] == p2))
-                or ((comb[1] == p1) or (comb[1] == p2))
-            )
-        ]
-        return index_combinacoes
+        if p[0] == p[1]:
+            mesa_l[i] = [p[0], p[1]]
+        else:
+            mesa_l[i] = [novo_lado]
+    return tuple(mesa_l)
 
 
-def pode_jogar_p(pedra, mesa):
-    if mesap(mesa):
-        if len(onde_pode_jogar_p(pedra, mesa)) != 0:
-            return True
-# P21: Escreva a função marca_ponto_p que tenha como
-# entrada uma "pedra" e uma "mesa" e produza True sss
-# a pedra pode ser jogada fazendo pontos em uma das
-# pontas da mesa. Lembre-se que as carroças devem ser
-# contadas pelas duas pontas da pedra.
-
-from P19 import pontos_marcados
-from p20 import pode_jogar_p
+# P24
+def joga_p(mao, mesa):
+    return [p for p in mao if pode_jogar_p(p, mesa)] != []
 
 
-def combinacoes(pedra, mesa):
-    return [mesa.index(combinacao) for combinacao in mesa if combinacao[0] == pedra[0]]
+# P25
+def jogada(mao, mesa):
+    maior_jogada = max(max([subt_p_from_mao_in_mesa(p, mesa, mao) for p in mao]))
+    return (maior_jogada[1], maior_jogada[2])
 
 
-def replace_pedra(mesa, pedra):
-    tup_list = list(mesa)
-    tup_list[combinacoes(pedra, mesa)[0]] = pedra
-    new_tuple = tuple(tup_list)
-    return new_tuple
-
-
-def jogar(pedra, mesa):
-    return replace_pedra(mesa, pedra)
-
-
-def marca_ponto_p(pedra, mesa):
-    if pode_jogar_p(pedra, mesa):
-        return pontos_marcados(jogar(pedra, mesa)) != 0
+# P26
+def faz_jogada(mao, mesa):
+    return subt_p_from_i_in_mesa(jogada(mao, mesa), mao, mesa)
