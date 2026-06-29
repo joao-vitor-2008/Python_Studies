@@ -154,7 +154,7 @@ def joga_pedra(p, mesa, i):
 
 
 # P24
-def joga_p(mao, mesa):
+def jogap(mao, mesa):
     return [p for p in mao if pode_jogar_p(p, mesa)] != []
 
 
