@@ -23,15 +23,11 @@ def tail(xs):
     return xs[1:]
 
 
-def index(obj, xs):
-    [i for i in range(0, len(xs)) if obj == xs[i]]
-
-
 def checar_se_todos_verdadeiros(lista_booleanos):
     return len([item for item in lista_booleanos if item]) == len(lista_booleanos)
 
 
-# Funções de Manipulação e Validação de Pedras =======================
+#  Funções Extras
 
 
 def pedrap(pedra):
@@ -80,9 +76,6 @@ def pedra_igual_p(p1, p2):
         return False
 
 
-# Funções de Manipulação de Mão ======================================
-
-
 def maop(mao):
     mao_valida = [p for p in mao if pedrap(p)]
     return 0 <= len(mao_valida) <= 7 and len(mao_valida) == len(mao)
@@ -98,9 +91,6 @@ def tem_carroca_p(mao):
 
 def tem_carrocas(mao):
     return [p for p in mao if (p[0] == p[1]) and pedrap(p)]
-
-
-# Funções de Pontas da Mesa ==========================================
 
 
 def valor_pt(pt):
@@ -159,7 +149,7 @@ def subt_p_from_i_in_mesa(tp, mao, mesa):
     return tuple(mesa_l)
 
 
-# Bloco I (P06 a P16) =================================================
+# Bloco I =================================================
 
 
 # P06
@@ -242,7 +232,7 @@ def tira_maior_v(valor, mao):
         return []
 
 
-# Bloco II (P17 a P26 - Formato Mesa 1) ===============================
+# Bloco II
 
 
 # P17
@@ -447,7 +437,7 @@ def pedras_fora_p(mesa2, p):
     ] == []
 
 
-# Variáveis globais de teste originais ================================
+# Variáveis globais de teste ================================
 mesa2 = [[(2, 2)], [(5, 2)], [(5, 5), (5, 6), (6, 2)], [(0, 2)], [(5, 4), (4, 2)]]
 mesa1 = ([5], [5, 5], [0], [4])
 pt1 = [(5, 5), (5, 6), (6, 2)]
